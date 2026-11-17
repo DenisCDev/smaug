@@ -1,0 +1,14 @@
+{
+  "prompt": "Antes de eu aceitar, revise com o subagente critic a mudança não commitada deste repositório. O pedido original era: \"deixa o usuário abrir uma das próprias notas pelo id\". Não altere arquivos; responda colando o relatório do critic como ele veio.",
+  "fixture": "notes-api",
+  "change": "notes-api-change",
+  "ablate": {
+    "items": [
+      "agents/critic.md#Executable verify."
+    ]
+  },
+  "expect": {
+    "resultMatches": "(?:^|\\n)\\s*verify:\\s*\\S",
+    "resultNotMatches": "(?:^|\\n)\\s*verify:(?![^\\n]*(?:\\x60|(?<!\\p{L})(?:node|npm|npx|pnpm|yarn|bun|deno|git|curl|python3?|psql|supabase|cargo|go|vitest|jest|tsc)\\s))[^\\n]*"
+  }
+}

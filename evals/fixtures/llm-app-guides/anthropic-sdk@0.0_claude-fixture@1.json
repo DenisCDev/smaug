@@ -1,0 +1,8 @@
+{
+  "key": "anthropic-sdk@0.0+claude-fixture@1",
+  "reviewedAt": "2026-11-05",
+  "expiresAt": "2999-12-31",
+  "sources": ["https://docs.example.invalid/fixture-sdk"],
+  "summary": "Guia falso das evals: o par da fixture llm-app, para medir o índice e as regras sem pesquisa real.",
+  "body": "Guia falso das evals: o par da fixture llm-app, para medir o índice e as regras sem pesquisa real.\n\nNada aqui descreve um SDK ou modelo real."
+}

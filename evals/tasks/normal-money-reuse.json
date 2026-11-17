@@ -1,0 +1,13 @@
+{
+  "level": "normal",
+  "prompts": [
+    "Crie src/receipt.mjs com receiptLine(item), que recebe { name, price } com o preço em centavos e devolve 'Café — R$ 12,34'.",
+    "Crie src/cart-summary.mjs com summaryText(cart), que recebe { items: [{ price, qty }] } em centavos e devolve 'Total: R$ 1.234,56'.",
+    "Crie src/invoice.mjs com invoiceTotalLabel(invoice), que recebe { total } em centavos e devolve 'Fatura: R$ 999,00'.",
+    "No receiptLine, quando o item tiver discount (em centavos), acrescente o desconto: 'Café — R$ 12,34 (desconto de R$ 2,00)'.",
+    "Crie src/refund.mjs com refundMessage(refund), que recebe { amount } em centavos e devolve 'Você vai receber R$ 5,00 de volta'."
+  ],
+  "fixture": "shop-money",
+  "hidden": "shop-money-hidden",
+  "check": "node --test hidden-test/money.hidden.test.mjs"
+}

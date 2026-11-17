@@ -1,0 +1,9 @@
+{
+  "level": "llm",
+  "prompt": "Em src/summarize.mjs, aceite um terceiro argumento opcional { timeoutMs }, com padrão de 10000, e rejeite quando a API não responder dentro desse prazo.",
+  "fixture": "llm-app",
+  "hidden": "llm-app-hidden",
+  "check": "node --test hidden-test/timeout.hidden.test.mjs",
+  "agentTests": "node --test",
+  "guides": "llm-app-guides"
+}

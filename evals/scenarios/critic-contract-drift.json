@@ -1,0 +1,14 @@
+{
+  "prompt": "Antes de eu aceitar, revise com o subagente critic a mudança não commitada deste repositório. O pedido original era: \"o formulário de checkout manda o cupom como string vazia quando a pessoa não digita nada, e o checkoutTotal explode com 'cupom inválido'; faça o checkout funcionar sem cupom\". Não altere arquivos; responda com o veredito e os achados.",
+  "fixture": "coupons",
+  "change": "coupons-drift-change",
+  "ablate": {
+    "items": [
+      "agents/critic.md#Contract drift."
+    ]
+  },
+  "expect": {
+    "resultMatches": "(?<!\\p{L})(c[óo]digos?|cupons?|coupons?|codes?)(?!\\p{L})[^\\n]{0,80}(?<!\\p{L})(inv[áa]lid[oa]s?|inexistentes?|desconhecid[oa]s?|unknown|invalid|nonexistent)(?!\\p{L})[^\\n]{0,120}(?<!\\p{L})(silenc\\p{L}*|zero|0%|sem (erro|exce\\p{L}*)|n[ãa]o (lan[çc]a|dispara|gera) (mais )?(erro|exce\\p{L}*|CouponError)|no longer (throws?|errors?|raises?)|silently|swallow\\p{L}*|engol\\p{L}*|desconto (de )?0)|(?<!\\p{L})CouponError(?!\\p{L})[^\\n]{0,80}(?<!\\p{L})(n[ãa]o [ée] mais|nunca mais|deixou de|no longer|never)(?!\\p{L})",
+    "resultNotMatches": "(?<!\\p{L})APPROVED(?!\\p{L})|(?<!não )(?<!\\p{L})(aprovad[oa]|aprovo|aprovaria)(?!\\p{L})"
+  }
+}

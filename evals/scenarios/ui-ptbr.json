@@ -1,0 +1,6 @@
+{
+  "prompt": "Create src/AddressForm.tsx: a React address form with ZIP code, street and number fields and a submit button. Only create that file.",
+  "fixture": "ts-app",
+  "ablate": { "claudeMd": ["Language"], "rules": ["ui-ptbr.md", "ux-flows.md"] },
+  "expect": { "rules": ["ui-strings"] }
+}

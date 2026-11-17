@@ -1,0 +1,5 @@
+{
+  "ignore": ["packages/gate/test/**", "evals/fixtures/**"],
+  "checks": {},
+  "hook": { "eslint": false, "typecheck": false, "timeoutMs": 30000 }
+}

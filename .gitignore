@@ -1,0 +1,7 @@
+node_modules/
+!evals/fixtures/*/node_modules/
+.DS_Store
+*.log
+coverage/
+.tmp/
+evals/results/

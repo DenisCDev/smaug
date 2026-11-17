@@ -1,0 +1,10 @@
+{
+  "level": "normal",
+  "prompts": [
+    "O formulário de checkout manda o cupom como string vazia quando a pessoa não digita nada, e o checkoutTotal explode com 'cupom inválido'. Faça o checkout funcionar sem cupom.",
+    "Adicione em src/coupons.mjs uma função checkoutSummary(items, code) que devolve { subtotal, discount, total, coupon }, com coupon sendo o código em maiúsculas, ou null quando não há cupom. Use as regras de cupom que já existem."
+  ],
+  "fixture": "coupons",
+  "hidden": "coupons-hidden",
+  "check": "node --test hidden-test/coupons.hidden.test.mjs"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "smugan",
+  "description": "Smugan for Claude Code",
+  "owner": { "name": "DenisCDev", "url": "https://github.com/DenisCDev" },
+  "plugins": [
+    {
+      "name": "smugan",
+      "source": "./",
+      "description": "Quality gate, stack rules and reviewers for code written with Claude Code"
+    }
+  ]
+}

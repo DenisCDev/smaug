@@ -1,0 +1,48 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOOKS_DIR__/smugan-hook.mjs\" pre",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOOKS_DIR__/smugan-hook.mjs\" post",
+            "timeout": 120
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOOKS_DIR__/smugan-hook.mjs\" stop",
+            "timeout": 300
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOOKS_DIR__/smugan-hook.mjs\" sessionend",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

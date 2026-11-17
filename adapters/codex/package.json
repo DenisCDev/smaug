@@ -1,0 +1,10 @@
+{
+  "name": "smugan-codex",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Smugan passive quality layer adapted to OpenAI Codex (CLI + app)",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

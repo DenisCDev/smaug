@@ -1,0 +1,10 @@
+{
+  "name": "smugan-grok",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Smugan passive quality layer adapted to xAI Grok Build",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

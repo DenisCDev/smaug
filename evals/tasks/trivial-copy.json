@@ -1,0 +1,7 @@
+{
+  "level": "trivial",
+  "prompt": "Troque o nome da loja para \"Loja do Bairro\".",
+  "fixture": "ts-app",
+  "hidden": "ts-app-hidden",
+  "check": "node hidden-check.mjs"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "smugan-antigravity",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Smugan passive quality layer adapted to Google Antigravity",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

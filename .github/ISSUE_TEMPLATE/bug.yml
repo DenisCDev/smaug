@@ -1,0 +1,60 @@
+name: Bug
+description: Something in Smugan does not do what the documentation says.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A vulnerability? Do not open an issue: use the private form described in SECURITY.md.
+        Before pasting logs, remove paths, project names and any private data.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The observed behavior and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to reproduce
+      description: Minimal steps, ideally in a small project.
+      placeholder: |
+        1. ./install.sh
+        2. In a project with ..., edit ...
+        3. The Stop hook ...
+    validations:
+      required: true
+  - type: dropdown
+    id: host
+    attributes:
+      label: Host
+      options:
+        - Claude Code
+        - Codex
+        - Grok Build
+        - OpenCode
+        - Antigravity
+        - CLI only (smugan check / context / doctor)
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Smugan commit
+      description: Output of `git rev-parse --short HEAD` in the checkout.
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: OS and Node
+      placeholder: Windows 11, Git Bash, Node 24.x
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Output of smugan doctor and smugan why
+      description: Run `smugan doctor` and, if a hook is involved, `smugan why` in the affected session.
+      render: text

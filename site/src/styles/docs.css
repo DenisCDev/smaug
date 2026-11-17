@@ -1,0 +1,39 @@
+/* Starlight theme in the brand's colours: dark ground, gold accent. */
+:root {
+	--sl-font: 'Jost', system-ui, sans-serif;
+	--sl-color-accent-low: #3a2a10;
+	--sl-color-accent: #c98a26;
+	--sl-color-accent-high: #ffd36b;
+	--sl-color-white: #f3ece2;
+	--sl-color-gray-1: #e6dccd;
+	--sl-color-gray-2: #c9bcaa;
+	--sl-color-gray-3: #a3978a;
+	--sl-color-gray-4: #6b6157;
+	--sl-color-gray-5: #3a322b;
+	--sl-color-gray-6: #221c17;
+	--sl-color-black: #0e0c0b;
+}
+:root[data-theme='light'] {
+	--sl-color-accent-low: #fbe7c0;
+	--sl-color-accent: #8a5a12;
+	--sl-color-accent-high: #4a300a;
+	--sl-color-white: #1a1410;
+	--sl-color-gray-1: #2b231c;
+	--sl-color-gray-2: #4a4037;
+	--sl-color-gray-3: #6e6358;
+	--sl-color-gray-4: #9c9083;
+	--sl-color-gray-5: #d6ccbf;
+	--sl-color-gray-6: #f1ebe2;
+	--sl-color-gray-7: #f8f4ee;
+	--sl-color-black: #fffdf9;
+}
+.site-title {
+	font-family: 'Pixelify Sans', 'Jost', sans-serif;
+	font-weight: 700;
+	color: var(--sl-color-accent-high);
+}
+.site-title img { image-rendering: pixelated; }
+.sl-markdown-content h1,
+.content-panel h1 {
+	letter-spacing: -0.02em;
+}

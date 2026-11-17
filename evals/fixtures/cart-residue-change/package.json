@@ -1,0 +1,11 @@
+{
+  "name": "carrinho",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "decimal.js": "10.6.0"
+  }
+}

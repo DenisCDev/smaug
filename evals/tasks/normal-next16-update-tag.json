@@ -1,0 +1,7 @@
+{
+  "level": "normal",
+  "prompt": "Em app/posts/actions.ts, o savePost grava o post, mas quem acabou de salvar continua vendo a lista antiga em /posts. Faça a lista mostrar o post novo logo depois de salvar, já na mesma requisição.",
+  "fixture": "next16-posts",
+  "hidden": "next16-posts-hidden",
+  "check": "node --experimental-strip-types --import ./hidden-test/register.mjs --test hidden-test/posts.hidden.test.mjs"
+}

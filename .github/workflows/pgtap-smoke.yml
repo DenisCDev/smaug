@@ -1,0 +1,81 @@
+# Behavioral smoke for the pgTAP harness templates: a deliberately WRONG RLS
+# policy (any authenticated user reads everything) must FAIL the 3-scenario
+# test, and the correct policy must PASS. This proves the harness catches what
+# the static rls check cannot.
+name: pgtap-smoke
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'templates/supabase-tests/**'
+      - '.github/workflows/pgtap-smoke.yml'
+
+jobs:
+  harness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: scaffold fixture project
+        run: |
+          mkdir -p smoke
+          cd smoke
+          supabase init --force
+          mkdir -p supabase/migrations supabase/tests
+          cp ../templates/supabase-tests/000-setup.sql supabase/tests/
+          cp ../templates/supabase-tests/001-rls-enabled.sql supabase/tests/
+          sed 's/__TABLE__/notes/g' ../templates/supabase-tests/table-rls.test.sql.template > supabase/tests/100-notes.test.sql
+      - name: write WRONG policy migration (authenticated reads everything)
+        working-directory: smoke
+        run: |
+          cat > supabase/migrations/0001_notes.sql <<'SQL'
+          create table notes (
+            id uuid primary key default gen_random_uuid(),
+            user_id uuid not null,
+            body text not null default '',
+            created_at timestamptz not null default now()
+          );
+          alter table notes enable row level security;
+          -- WRONG on purpose: every authenticated user can read every row
+          create policy "notes_select_all" on notes for select to authenticated using (true);
+          create policy "notes_insert_own" on notes for insert to authenticated with check ((select auth.uid()) = user_id);
+          SQL
+      - name: wrong policy must FAIL the harness (for the RIGHT reason)
+        working-directory: smoke
+        run: |
+          supabase db start
+          if supabase test db > tap.log 2>&1; then
+            echo "::error::suite PASSED with a broken policy — harness is not catching behavior"
+            cat tap.log
+            exit 1
+          fi
+          # It must fail on the leak assertion, not on a broken harness.
+          # pg_prove condenses failures as '# Failed test N: "..."'.
+          if grep -Eq '(not ok|Failed test).*another user reads zero rows from notes' tap.log; then
+            echo "OK: broken policy caught by the 3-scenario test (leak assertion failed)"
+          else
+            echo "::error::suite failed for the wrong reason — harness problem, not the policy"
+            cat tap.log
+            exit 1
+          fi
+      - name: fix the policy (owner-only read)
+        working-directory: smoke
+        run: |
+          cat > supabase/migrations/0001_notes.sql <<'SQL'
+          create table notes (
+            id uuid primary key default gen_random_uuid(),
+            user_id uuid not null,
+            body text not null default '',
+            created_at timestamptz not null default now()
+          );
+          alter table notes enable row level security;
+          create policy "notes_select_own" on notes for select to authenticated using ((select auth.uid()) = user_id);
+          create policy "notes_insert_own" on notes for insert to authenticated with check ((select auth.uid()) = user_id);
+          SQL
+          supabase db reset
+      - name: correct policy must PASS the harness
+        working-directory: smoke
+        run: supabase test db

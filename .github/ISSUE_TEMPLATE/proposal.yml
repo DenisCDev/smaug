@@ -1,0 +1,39 @@
+name: Proposal
+description: A new check, adapter or hook behavior, a new dependency or a breaking change, before any code.
+labels: [proposal]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        CONTRIBUTING.md asks for this issue before a large change, so the approach is agreed before the work.
+        Bug fixes, tests and documentation fixes can go straight to a pull request.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What goes wrong today, with a concrete case. A link to a real session or diff helps.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: The proposed change
+      description: What Smugan would do differently, and where (engine, hook, adapter, rule, docs).
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Including doing nothing, a project setting or a `smugan-ignore` exception.
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility and cost
+      description: Who could notice the change, new dependencies, and false positives a new check might bring.
+  - type: checkboxes
+    id: work
+    attributes:
+      label: Contribution
+      options:
+        - label: I intend to open the pull request once the approach is agreed.

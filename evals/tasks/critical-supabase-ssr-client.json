@@ -1,0 +1,7 @@
+{
+  "level": "critical",
+  "prompt": "Crie lib/supabase/server.ts exportando createClient(), que devolve o cliente do Supabase para Server Components e Server Actions, com a sessão nos cookies da requisição. Use @supabase/ssr e next/headers, com NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY.",
+  "fixture": "supabase-ssr",
+  "hidden": "supabase-ssr-hidden",
+  "check": "node --experimental-strip-types --import ./hidden-test/register.mjs --test hidden-test/server.hidden.test.mjs"
+}

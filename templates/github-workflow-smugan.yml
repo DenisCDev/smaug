@@ -1,0 +1,77 @@
+# smugan quality gate for this project — installed by `smugan init`.
+# While the smugan repo is private, add a repo secret SMUGAN_TOKEN
+# (fine-grained PAT with read access to DenisCDev/smugan).
+name: smugan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: detect node version source and package manager
+        id: detect
+        run: |
+          if [ -f .nvmrc ]; then echo "node_file=.nvmrc" >> "$GITHUB_OUTPUT"
+          elif [ -f .node-version ]; then echo "node_file=.node-version" >> "$GITHUB_OUTPUT"
+          elif node -e "const p=require('./package.json'); process.exit(p.volta?.node || p.engines?.node ? 0 : 1)"; then echo "node_file=package.json" >> "$GITHUB_OUTPUT"
+          else echo "::error::No Node version declared: add .nvmrc, .node-version, or volta.node / engines.node in package.json."; exit 1; fi
+          if [ -f pnpm-lock.yaml ]; then pm=pnpm; install="pnpm install --frozen-lockfile"; exec="pnpm exec"
+          elif [ -f yarn.lock ]; then pm=yarn; exec=yarn
+            if [ -f .yarnrc.yml ]; then install="yarn install --immutable"; else install="yarn install --frozen-lockfile"; fi
+          elif [ -f bun.lock ] || [ -f bun.lockb ]; then pm=bun; install="bun install --frozen-lockfile"; exec=bunx
+          elif [ -f package-lock.json ]; then pm=npm; install="npm ci"; exec=npx
+          else pm=npm; install="npm install"; exec=npx; fi
+          {
+            echo "pm=$pm"; echo "install=$install"; echo "exec=$exec"
+            node -e "const s=require('./package.json').scripts||{};console.log('typecheck='+('typecheck' in s));console.log('test='+('test' in s))"
+          } >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ steps.detect.outputs.node_file }}
+      - name: enable corepack
+        if: ${{ steps.detect.outputs.pm == 'pnpm' || steps.detect.outputs.pm == 'yarn' }}
+        run: corepack enable
+      - uses: oven-sh/setup-bun@v2
+        if: ${{ steps.detect.outputs.pm == 'bun' }}
+        with:
+          bun-version-file: package.json
+      - name: install dependencies
+        run: ${{ steps.detect.outputs.install }}
+      - name: fetch smugan gate
+        run: git clone --depth 1 "https://x-access-token:${{ secrets.SMUGAN_TOKEN }}@github.com/DenisCDev/smugan" "$RUNNER_TEMP/smugan"
+      - name: smugan check
+        run: node "$RUNNER_TEMP/smugan/packages/gate/bin/smugan.mjs" check
+      - name: typecheck
+        if: ${{ steps.detect.outputs.typecheck == 'true' }}
+        run: ${{ steps.detect.outputs.pm }} run typecheck
+      - name: unit tests
+        if: ${{ steps.detect.outputs.test == 'true' }}
+        run: ${{ steps.detect.outputs.pm }} run test
+      # The CLI version comes from the installed `supabase` package; with none, the pgTAP steps are skipped.
+      - name: detect supabase cli version
+        id: supabase
+        if: ${{ hashFiles('supabase/tests/**/*.sql') != '' }}
+        run: |
+          v=$(node -p "require('fs').existsSync('node_modules/supabase/package.json') ? require('./node_modules/supabase/package.json').version : ''")
+          if [ -n "$v" ]; then echo "version=$v" >> "$GITHUB_OUTPUT"
+          else echo "::warning::supabase/tests exists but no installed supabase package declares the CLI version; pgTAP skipped."; fi
+      - name: setup supabase cli
+        if: ${{ hashFiles('supabase/tests/**/*.sql') != '' && steps.supabase.outputs.version != '' }}
+        uses: supabase/setup-cli@v1
+        with:
+          version: ${{ steps.supabase.outputs.version }}
+      - name: pgTAP (RLS behavior)
+        if: ${{ hashFiles('supabase/tests/**/*.sql') != '' && steps.supabase.outputs.version != '' }}
+        run: |
+          supabase db start
+          supabase test db
+      - name: e2e (Playwright)
+        if: ${{ hashFiles('playwright.config.*') != '' }}
+        run: |
+          ${{ steps.detect.outputs.exec }} playwright install --with-deps chromium
+          ${{ steps.detect.outputs.exec }} playwright test

@@ -1,0 +1,389 @@
+---
+import '../../styles/landing.css';
+import { samples } from './samples';
+import { copy, ruleList, type Lang } from './copy';
+import { catches } from './wild';
+
+interface Props {
+	lang: Lang;
+}
+const t = copy[Astro.props.lang];
+const b = t.base;
+const repo = 'https://github.com/DenisCDev/smugan';
+const lines = (text: string) => text.split('\n').filter(Boolean);
+const clone = `git clone ${repo}.git smugan\ncd smugan\n`;
+// The commands each platform's README gives for installing from a checkout.
+const installTabs = [
+	['Claude Code', `${clone}./install.sh\nsmugan doctor`],
+	['Codex', `${clone}cd adapters/codex && ./install.sh`],
+	['OpenCode', `${clone}cd adapters/opencode && ./install.sh`],
+	['Antigravity', `${clone}cd adapters/antigravity && ./install.sh`],
+	['Grok Build', `${clone}cd adapters/grok && ./install.sh`],
+];
+const site = 'https://smugan-docs.vercel.app';
+const pageUrl = `${site}${b}/`;
+// Only facts the repository states: version from packages/gate/package.json, license, runtime, platforms.
+const structuredData = {
+	'@context': 'https://schema.org',
+	'@graph': [
+		{ '@type': 'WebSite', '@id': `${site}/#website`, url: `${site}/`, name: 'Smugan', inLanguage: ['en', 'pt-BR'], description: copy.en.description },
+		{
+			'@type': 'SoftwareApplication',
+			'@id': `${site}/#software`,
+			name: 'Smugan',
+			description: t.description,
+			url: pageUrl,
+			applicationCategory: 'DeveloperApplication',
+			applicationSubCategory: 'Quality gate for AI coding agents',
+			operatingSystem: 'Windows, Linux',
+			softwareVersion: '0.21.0',
+			softwareRequirements: 'Node.js 22 or newer',
+			license: 'https://opensource.org/licenses/MIT',
+			isAccessibleForFree: true,
+			offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+			downloadUrl: repo,
+			author: { '@type': 'Person', name: 'DenisCDev', url: 'https://github.com/DenisCDev' },
+			featureList: [
+				'Refuses a file write that would introduce a known violation',
+				'Runs the project lint and type checks after each write',
+				'Holds the end of the turn until related tests and checks pass',
+				'Separate reviewers that check the diff against the original request',
+				'Version-aware context from the installed dependencies',
+				'Works with Claude Code, Codex, OpenCode, Antigravity and Grok Build',
+			],
+		},
+		{ '@type': 'SoftwareSourceCode', name: 'Smugan', codeRepository: repo, programmingLanguage: 'JavaScript', runtimePlatform: 'Node.js', license: 'https://opensource.org/licenses/MIT', targetProduct: { '@id': `${site}/#software` } },
+	],
+};
+// Gate lines look like 'path:LINE  [rule]  message — how to fix'; the demo pins each one to its line.
+const notesByLine = (out: string) => {
+	const map = new Map<number, [string, string][]>();
+	for (const line of lines(out)) {
+		const m = /^.+?:(\d+)\s+\[([\w-]+)\]\s+(.*)$/.exec(line);
+		if (!m) continue;
+		const n = Number(m[1]);
+		map.set(n, [...(map.get(n) ?? []), [m[2], m[3].split(' — ')[0]]]);
+	}
+	return map;
+};
+const summary = (out: string) => /^smugan: (\d+ violations?)/m.exec(out)?.[1] ?? '';
+const verdictClass = (line: string) =>
+	/^smugan: clean/.test(line) ? 'verdict clean' : /^smugan: \d+ violation/.test(line) ? 'verdict blocked' : undefined;
+---
+
+<!doctype html>
+<html lang={t.htmlLang}>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{t.title}</title>
+		<meta name="description" content={t.description} />
+		<link rel="alternate" hreflang="en" href="https://smugan-docs.vercel.app/" />
+		<link rel="alternate" hreflang="pt-BR" href="https://smugan-docs.vercel.app/pt-br/" />
+		<link rel="alternate" hreflang="x-default" href="https://smugan-docs.vercel.app/" />
+		<link rel="canonical" href={pageUrl} />
+		<meta name="google-site-verification" content="hyZdi8iTPN6-HyyOKnXkt8S1GeoURhgKooyPWvulJSY" />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Smugan" />
+		<meta property="og:title" content={t.title} />
+		<meta property="og:description" content={t.description} />
+		<meta property="og:url" content={pageUrl} />
+		<meta property="og:locale" content={t.htmlLang === 'en' ? 'en_US' : 'pt_BR'} />
+		<meta property="og:image" content={`${site}/og.png`} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content={t.hero.title} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700&family=Pixelify+Sans:wght@500;700&display=swap" rel="stylesheet" />
+	</head>
+	<body>
+		<header class="bar">
+			<a class="wordmark" href={`${b}/`}>Smugan</a>
+			<nav aria-label="Main">
+				<a href={`${b}/start/introduction/`}>{t.nav.docs}</a>
+				<a href={`${b}/reference/checks/`}>{t.nav.checks}</a>
+				<a href={repo}>GitHub</a>
+				<a href={t.nav.other.href} hreflang={t.nav.other.label === 'PT' ? 'pt-BR' : 'en'} aria-label={t.nav.other.name}>{t.nav.other.label}</a>
+			</nav>
+			<a class="button small" href={`${b}/start/install/`}>{t.nav.install}</a>
+		</header>
+
+		<main>
+			<section class="hero" aria-labelledby="hero-title">
+				<div class="scene" data-hero-scene aria-hidden="true">
+					<canvas data-layer="bg"></canvas>
+					<canvas data-layer="main"></canvas>
+					<canvas data-layer="bloom"></canvas>
+					<div class="shaft"></div>
+					<canvas data-layer="fg"></canvas>
+				</div>
+				<div class="hero-copy">
+					<h1 id="hero-title">{t.hero.title}</h1>
+					<p class="lead">{t.hero.lead}</p>
+					<div class="actions">
+						<a class="button" href={`${b}/start/install/`}>{t.hero.cta}</a>
+						<a class="link" href="#demo">{t.hero.demoLink} <span aria-hidden="true">↓</span></a>
+					</div>
+				</div>
+			</section>
+
+			<section class="entropy" aria-labelledby="entropy-title">
+				<div class="entropy-copy">
+					<h2 id="entropy-title" class="reveal">{t.entropy.title}</h2>
+					<blockquote class="reveal">
+						<p lang="en">{t.entropy.quote}</p>
+						<cite>{t.entropy.cite}</cite>
+					</blockquote>
+					{t.entropy.paras.map((text) => <p class="reveal">{text}</p>)}
+				</div>
+				<div class="entropy-scene reveal" data-entropy>
+					<canvas aria-hidden="true"></canvas>
+					<div class="entropy-labels">{t.entropy.labels.map((label) => <span>{label}</span>)}</div>
+					<dl class="evidence">
+						{t.entropy.evidence.map(([figure, text, source, href]) => (
+							<div class="reveal">
+								<dt>{figure}</dt>
+								<dd>{text} <a href={href}>{source}</a></dd>
+							</div>
+						))}
+					</dl>
+				</div>
+				<ul class="entropy-points">
+					{t.entropy.points.map(([lead, text]) => (
+						<li class="reveal"><strong>{lead}</strong><span>{text}</span></li>
+					))}
+				</ul>
+			</section>
+
+			<section id="demo" class="demo" aria-labelledby="demo-title">
+				<div class="demo-copy">
+					<h2 id="demo-title" class="reveal">{t.demo.title}</h2>
+					<p class="reveal">{t.demo.lead[0]}<code>smugan check</code>{t.demo.lead[1]}</p>
+					<div class="tabs reveal" role="tablist" aria-label={t.demo.tabsLabel}>
+						{samples.map((s, i) => (
+							<button role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-tab={s.id}>{t.demo.labels[s.id]}</button>
+						))}
+					</div>
+				</div>
+				<div class="terminal reveal" data-ui data-terminal data-step="0">
+					{samples.map((s, i) => (
+						<div class="sample" data-sample={s.id} hidden={i !== 0}>
+							<div class="term-head">
+								<span class="agent-dot" aria-hidden="true"></span>
+								<span>{t.demo.agent} · Write <strong>{s.file}</strong></span>
+							</div>
+							{(['before', 'after'] as const).map((state) => {
+								const notes = notesByLine(state === 'before' ? s.beforeOut : s.afterOut);
+								const count = summary(state === 'before' ? s.beforeOut : s.afterOut);
+								return (
+									<div class="pane" data-state={state} hidden={state === 'after'}>
+										<div class="editor">
+											{(state === 'before' ? s.before : s.after).split('\n').map((code, n) => (
+												<>
+													<div class={notes.has(n + 1) ? 'ln flagged' : 'ln'}>
+														<span class="no">{n + 1}</span>
+														<code>{code || ' '}</code>
+													</div>
+													{(notes.get(n + 1) ?? []).map(([rule, short]) => (
+														<div class="comment"><b>{rule}</b><span>{short}</span></div>
+													))}
+												</>
+											))}
+										</div>
+										<div class={count ? 'status refused' : 'status allowed'}>
+											<canvas class="gate-icon" data-gate width="12" height="10" aria-hidden="true"></canvas>
+											<span>{count ? `${state === 'before' ? t.demo.refused : t.demo.stillBlocked} · ${count}` : t.demo.allowed}</span>
+										</div>
+										{state === 'after' && <p class="note">{t.demo.notes[s.id]}</p>}
+										<details class="raw">
+											<summary>{t.demo.raw}</summary>
+											<ol>{lines(state === 'before' ? s.beforeOut : s.afterOut).map((l) => <li class={verdictClass(l)}>{l}</li>)}</ol>
+										</details>
+									</div>
+								);
+							})}
+						</div>
+					))}
+					<div class="steps">
+						{t.demo.steps.map((label, i) => (
+							<button class="step" data-go={i} aria-pressed={i === 0 ? 'true' : 'false'}>{label}</button>
+						))}
+						<button class="replay" data-replay>{t.demo.replay}</button>
+					</div>
+				</div>
+			</section>
+
+			<section class="moments" aria-labelledby="moments-title">
+				<h2 id="moments-title" class="reveal">{t.moments.title}</h2>
+				<div class="stack" data-stack>
+					{t.moments.items.map(([lead, rest], i) => (
+						<article class="card" style={`--i: ${i}`}>
+							<div class="card-copy">
+								<h3>{lead.replace(/,$/, '')}</h3>
+								<p>{rest}</p>
+							</div>
+							<pre class="chip" data-ui><code>{[
+								'line 1  [rls]  table "clients" created without RLS',
+								'eslint src/cart.ts  →  1 error introduced by this edit',
+								'vitest related src/cart.ts  →  12 passed',
+								'critic  →  2 findings, each with a command that reproduces it',
+							][i]}</code></pre>
+						</article>
+					))}
+				</div>
+			</section>
+
+			<section class="wild" aria-labelledby="wild-title">
+				<h2 id="wild-title" class="reveal">{t.wild.title}</h2>
+				<p class="wild-lead reveal">{t.wild.lead}</p>
+				<ul class="catches">
+					{catches.map((c, i) => (
+						<li class="catch reveal">
+							<div class="catch-head">
+								<strong>{c.repo}</strong>
+								<span class="when">{c.rule}</span>
+							</div>
+							<pre class="catch-code" data-ui><code>{c.snippet}</code></pre>
+							<p class="catch-gate" data-ui><code>{c.path}:{c.line}  [{c.rule}]  {c.gate}</code></p>
+							<p class="catch-why">{t.wild.why[i]}</p>
+							<a class="link" href={c.permalink}>{t.wild.source} <span aria-hidden="true">→</span></a>
+						</li>
+					))}
+				</ul>
+			</section>
+
+			<section class="board" aria-labelledby="board-title">
+				<h2 id="board-title" class="reveal">{t.board.title}</h2>
+				<p class="board-lead reveal">{t.board.lead}</p>
+				<ul class="rows" data-ui data-board>
+					{ruleList.map(([id, area, when], i) => (
+						<li class={i === 0 ? 'row open' : 'row'}>
+							<button aria-expanded={i === 0 ? 'true' : 'false'}>
+								<span class="rule">{id}</span>
+								<span class="area">{t.board.areas[area]}</span>
+								<span class={when === 'end' ? 'when lists' : 'when'}>{when === 'end' ? t.board.end : t.board.before}</span>
+							</button>
+							<p class="detail">{t.board.rules[id]}</p>
+						</li>
+					))}
+				</ul>
+				<a class="link reveal" href={`${b}/reference/checks/`}>{t.board.more} <span aria-hidden="true">→</span></a>
+			</section>
+
+			<section class="platforms" aria-labelledby="platforms-title">
+				<h2 id="platforms-title" class="reveal">{t.platforms.title}</h2>
+				<p class="reveal">{t.platforms.lead}</p>
+				<ul class="fan" data-fan>
+					{t.platforms.items.map(([name, what], i) => (
+						<li class="fan-card" style={`--i: ${i - 2}`}>
+							<span class="seal" aria-hidden="true"></span>
+							<strong>{name}</strong>
+							<span>{what}</span>
+						</li>
+					))}
+				</ul>
+			</section>
+
+			<section class="stats" aria-labelledby="stats-title">
+				<h2 id="stats-title">{t.stats.title}</h2>
+				<dl class="stat-grid">
+					{t.stats.items.map(([value, label]) => (
+						<div class="stat">
+							<dt data-count={value}>{value}</dt>
+							<dd>{label}</dd>
+						</div>
+					))}
+				</dl>
+			</section>
+
+			<section class="privacy" aria-labelledby="privacy-title">
+				<h2 id="privacy-title" class="reveal">{t.privacy.title}</h2>
+				<dl class="privacy-list">
+					{t.privacy.items.map(([term, text]) => (
+						<div class="reveal">
+							<dt><span class="seal" aria-hidden="true"></span>{term}</dt>
+							<dd>{text}</dd>
+						</div>
+					))}
+				</dl>
+			</section>
+
+			<section class="name" aria-labelledby="name-title" data-words>
+				<div class="name-inner">
+					<h2 id="name-title" class="statement">
+						{t.name.words.map(([word, gold], i) => (
+							<>
+								<span class={gold ? 'w gold' : 'w'}>{word} </span>
+								{word.endsWith('.') && i < t.name.words.length - 1 && <br />}
+							</>
+						))}
+					</h2>
+					<p class="name-lead">{t.name.lead}</p>
+				</div>
+			</section>
+
+			<section class="faq" aria-labelledby="faq-title">
+				<h2 id="faq-title" class="reveal">{t.faq.title}</h2>
+				<div class="faq-list">
+					{t.faq.items.map(([q, a]) => (
+						<details class="reveal">
+							<summary>{q}</summary>
+							<p>{a}</p>
+						</details>
+					))}
+				</div>
+			</section>
+
+			<section class="install" aria-labelledby="install-title">
+				<h2 id="install-title" class="reveal">{t.install.title}</h2>
+				<div class="install-grid">
+					<div class="reveal">
+						<p>{t.install.lead}</p>
+						<p><a class="link" href={`${b}/start/plugin/`}>{t.install.plugin}</a></p>
+						<p><a class="link" href={`${b}/adapters/`}>{t.install.adapters}</a></p>
+					</div>
+					<div class="cmd reveal" data-ui data-install>
+						<div class="cmd-tabs" role="tablist" aria-label={t.install.tabsLabel}>
+							{installTabs.map(([name], i) => (
+								<button role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-install-tab={i}>{name}</button>
+							))}
+						</div>
+						{installTabs.map(([, cmd], i) => (
+							<pre data-install-panel={i} hidden={i !== 0}><code>{cmd}</code></pre>
+						))}
+						<button class="button" data-copy data-copied={t.install.copied} data-failed={t.install.copyFailed}>{t.install.copy}</button>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<div class="night" data-night aria-hidden="true">
+			<canvas data-layer="main"></canvas>
+			<canvas data-layer="bloom"></canvas>
+		</div>
+		<footer class="foot">
+			<span>{t.foot.license}</span>
+			<span class="foot-links"><a href={`${b}/start/introduction/`}>{t.nav.docs}</a><a href={`${repo}/blob/main/CHANGELOG.md`}>Changelog</a><a href={repo}>GitHub</a></span>
+			<span>2026</span>
+		</footer>
+
+		<script>
+			import { mountScene } from './scene';
+			import { mountPage } from './page';
+			import { mountNight } from './night';
+			import { mountEntropy } from './entropy';
+			const scene = document.querySelector<HTMLElement>('[data-hero-scene]');
+			if (scene) mountScene(scene);
+			const night = document.querySelector<HTMLElement>('[data-night]');
+			if (night) mountNight(night);
+			const entropy = document.querySelector<HTMLElement>('[data-entropy]');
+			if (entropy) mountEntropy(entropy);
+			mountPage();
+		</script>
+	</body>
+</html>

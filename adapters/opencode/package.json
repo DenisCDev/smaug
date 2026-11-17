@@ -1,0 +1,10 @@
+{
+  "name": "smugan-opencode",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Smugan passive quality layer adapted to OpenCode",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

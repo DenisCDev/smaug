@@ -1,0 +1,9 @@
+{
+  "prompt": "Crie em src/billing/invoices.mjs a função listInvoices(customerId), que devolve as faturas do cliente, cada uma com os itens dela no campo items. No fim, diga o que ficou garantido e como foi verificado.",
+  "fixture": "invoices-api",
+  "ablate": { "items": ["skills/smugan-build/SKILL.md#Query budget."] },
+  "expect": {
+    "resultMatches": "(?<!\\p{L})(no máximo|até|at most|no more than)\\s*\\d+\\s*(consultas?|queries|query|chamadas?)(?!\\p{L})|(?<!\\p{L})\\d+\\s*(consultas?|queries|chamadas?)(?!\\p{L})[^\\n]{0,30}(?<!\\p{L})(para|for|com|with)\\s*\\d+\\s*(faturas?|invoices?|itens|items)(?!\\p{L})|≤\\s*\\d+\\s*(consultas?|queries)",
+    "resultNotMatches": "(?<!\\p{L})(uma|one)\\s*(consulta|query)\\s*(por|per)\\s*(fatura|invoice)(?!\\p{L})[^\\n]{0,40}(?<!\\p{L})(ok|aceitável|acceptable|fine)(?!\\p{L})"
+  }
+}

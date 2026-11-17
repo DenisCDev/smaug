@@ -1,0 +1,7 @@
+{
+  "level": "normal",
+  "prompt": "O total do carrinho está errado com cupom de porcentagem: total([{ price: 1000, qty: 2 }], { percent: 10 }) devolve 1990 em vez de 1800. Corrija.",
+  "fixture": "cart",
+  "hidden": "cart-hidden",
+  "check": "node --test hidden-test/cart.hidden.test.mjs"
+}

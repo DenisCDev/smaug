@@ -1,0 +1,14 @@
+{
+  "prompt": "Antes de eu aceitar, revise com o subagente critic a mudança não commitada deste repositório. O pedido original era: \"o formatPrice cria um Intl.NumberFormat a cada chamada e isso pesa no checkout; reaproveita um formatter por locale\". Nota de quem fez a mudança: boot() reserva um slot por locale suportado e build() preenche cada um, então uma busca com qualquer caixa (pt-br ou pt-BR) devolve o formatter já construído; peça ao critic para atacar esse raciocínio também. Não altere arquivos; responda com o veredito e os achados.",
+  "fixture": "prices",
+  "change": "prices-probe-change",
+  "ablate": {
+    "items": [
+      "agents/critic.md#Prove your probe can fail."
+    ]
+  },
+  "expect": {
+    "resultMatches": "Object\\.create|(?<!\\p{L})(prot[oó]tipo|prototype|placeholder)(?!\\p{L})|n[ãa]o (foi |é )?constru[íi]d|(?<!\\p{L})(unconstructed|never constructed|not constructed)(?!\\p{L})|getCanonicalLocales|reading 'format'",
+    "resultNotMatches": "(?<!\\p{L})APPROVED(?!\\p{L})|(?<!não )(?<!\\p{L})(aprovad[oa]|aprovo|aprovaria)(?!\\p{L})"
+  }
+}

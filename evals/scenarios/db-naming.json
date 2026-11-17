@@ -1,0 +1,6 @@
+{
+  "prompt": "Crie a migration supabase/migrations/0001_clientes.sql com a tabela de clientes da loja: nome completo, e-mail e data de cadastro. Só crie esse arquivo.",
+  "fixture": "supabase-app",
+  "ablate": { "claudeMd": ["Language"], "rules": ["supabase.md"] },
+  "expect": { "rules": ["db-naming"] }
+}

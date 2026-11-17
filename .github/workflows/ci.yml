@@ -1,0 +1,66 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [22, 24]
+    defaults:
+      run:
+        working-directory: packages/gate
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: context parser dependencies
+        run: npm ci --ignore-scripts
+      - name: tests
+        run: node --test
+      - name: typecheck (strict checkJs)
+        run: |
+          npm i --no-save --ignore-scripts --silent typescript@5.7.3 @types/node@${{ matrix.node }}
+          node node_modules/typescript/bin/tsc -p tsconfig.json
+          node node_modules/typescript/bin/tsc --noEmit --allowJs --checkJs --strict --skipLibCheck --target es2022 --module nodenext --moduleResolution nodenext --types node --typeRoots node_modules/@types ../../evals/run.mjs ../../evals/ab.mjs ../../evals/no-network.mjs ../../evals/test/run.test.mjs
+      - name: dogfood — smugan checks itself
+        working-directory: .
+        run: node packages/gate/bin/smugan.mjs check
+      - name: rule evals pipeline (fake claude, no tokens)
+        working-directory: .
+        run: node --test evals/test/run.test.mjs
+
+  # The adapters run the real engine from this checkout, so a gate change that
+  # breaks a host shows up here instead of on someone's machine.
+  adapters:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        adapter: [grok, opencode, antigravity, codex]
+        os: [ubuntu-latest, windows-latest]
+        node: [22, 24]
+    defaults:
+      run:
+        working-directory: adapters/${{ matrix.adapter }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: context parser dependencies
+        working-directory: packages/gate
+        run: npm ci --ignore-scripts
+      - name: tests
+        run: node --test
+      # The root dogfood does not descend into the adapters, so they check
+      # themselves here — the same standard the engine holds everyone else to.
+      - name: dogfood — the gate checks the adapter's own sources
+        run: node ../../packages/gate/bin/smugan.mjs check

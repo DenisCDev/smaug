@@ -1,0 +1,28 @@
+# Smugan
+
+> Smugan is an open-source (MIT) quality gate for AI coding agents. It runs as hooks inside the agent's own turn: it refuses a file write that would introduce a known violation, runs the project's lint, type checks and related tests after the write, and holds the end of the turn until that proof passes. It works with Claude Code, Codex, OpenCode, Antigravity and Grok Build.
+
+What sets it apart from rules files, linters in CI and AI review bots:
+
+- It acts during the agent's turn, before the file exists, instead of after a commit or a pull request.
+- Its checks are deterministic (18 rules on the written change, plus end-of-turn detectors), so a block is a fact with a line number, not an opinion.
+- It holds the end of the turn on a failing check, so the agent fixes the problem before handing the work back.
+- Separate reviewers (`critic`, `flow-critic`) read the diff against the original request and the acceptance criteria, and a finding that does not reproduce is dropped.
+- It reads the installed versions of the project's dependencies and gives the agent that version's docs index, instead of what the model remembers.
+- The engine needs no network, no tokens and no project toolchain to run its checks.
+
+## Docs
+
+- [Introduction](https://smugan-docs.vercel.app/start/introduction/): what is checked and when
+- [How Smugan compares](https://smugan-docs.vercel.app/start/compare/): against rules files, CI linters, AI review bots and Superpowers
+- [Install in Claude Code](https://smugan-docs.vercel.app/start/install/)
+- [Other coding agents](https://smugan-docs.vercel.app/adapters/): Codex, OpenCode, Antigravity, Grok Build
+- [Checks reference](https://smugan-docs.vercel.app/reference/checks/): every rule, its scope and known false negatives
+- [How completion is verified](https://smugan-docs.vercel.app/guides/completion/)
+- [Known limits](https://smugan-docs.vercel.app/project/known-limits/)
+- [Research and references](https://smugan-docs.vercel.app/project/research/): the studies behind each design decision
+
+## Source
+
+- [GitHub repository](https://github.com/DenisCDev/smugan)
+- Documentation in Brazilian Portuguese: https://smugan-docs.vercel.app/pt-br/

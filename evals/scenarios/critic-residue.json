@@ -1,0 +1,14 @@
+{
+  "prompt": "Antes de eu aceitar, revise com o subagente critic a mudança não commitada deste repositório. O pedido original era: \"o total do carrinho está errado com cupom de porcentagem: total([{ price: 1000, qty: 2 }], { percent: 10 }) devolve 1990 em vez de 1800; corrija\". Não altere arquivos; responda com o veredito e os achados.",
+  "fixture": "cart",
+  "change": "cart-residue-change",
+  "ablate": {
+    "items": [
+      "agents/critic.md#Out-of-scope residue."
+    ]
+  },
+  "expect": {
+    "resultMatches": "(?<!\\p{L})(repro\\.mjs|decimal\\.js|devDependenc\\p{L}*)(?!\\p{L})",
+    "resultNotMatches": "(?<!\\p{L})(não há|nenhum|no|without)\\s+(resíduos?|residue|arquivos? extras?|extra files?)(?!\\p{L})"
+  }
+}

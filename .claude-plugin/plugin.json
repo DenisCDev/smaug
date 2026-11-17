@@ -1,0 +1,45 @@
+{
+  "name": "smugan",
+  "version": "0.21.0",
+  "description": "Quality gate, stack rules and reviewers for code written with Claude Code",
+  "icon": "./.claude-plugin/icon.png",
+  "author": { "name": "DenisCDev", "url": "https://github.com/DenisCDev" },
+  "homepage": "https://github.com/DenisCDev/smugan",
+  "repository": "https://github.com/DenisCDev/smugan",
+  "license": "MIT",
+  "skills": "./claude/skills/",
+  "agents": [
+    "./claude/agents/critic.md",
+    "./claude/agents/flow-critic.md",
+    "./claude/agents/smugan-ai-research.md"
+  ],
+  "outputStyles": "./claude/output-styles/",
+  "hooks": "./claude/hooks/plugin-hooks.json",
+  "userConfig": {
+    "ui_language": {
+      "type": "string",
+      "title": "UI language",
+      "description": "Language code for the project's UI strings (pt-BR, en, es…) or off. With pt-BR, the ui-ptbr rule and the ui-strings check are added.",
+      "default": "off"
+    },
+    "reply_language": {
+      "type": "string",
+      "title": "Conversation language",
+      "description": "Language code the agent replies in (pt-BR, en, es…) or off to reply in the language you write in.",
+      "default": "off"
+    },
+    "profile": {
+      "type": "string",
+      "title": "Cost profile",
+      "description": "completo: reviewers on the conversation's model. economico: reviewers on sonnet. minimo: reviewers on haiku, without flow-critic. Cheaper reviewers find less; use the smaller profiles only for small tasks.",
+      "options": ["completo", "economico", "minimo"],
+      "default": "completo"
+    },
+    "disable": {
+      "type": "string",
+      "title": "Disabled parts",
+      "description": "Comma-separated list of what not to use: critic, flow-critic, smugan, smugan-build, smugan-finish or a stack rule (nextjs, supabase…). Disabled reviewers and skills are refused and removed from the instructions; disabled rules are not taught. Empty or none: nothing disabled.",
+      "default": ""
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "level": "critical",
+  "prompt": "Crie em src/billing/invoices.mjs a função listInvoices(customerId), que devolve as faturas do cliente, cada uma com os itens dela no campo items.",
+  "fixture": "invoices-api",
+  "hidden": "invoices-hidden",
+  "check": "node --test hidden-test/invoices.hidden.test.mjs"
+}

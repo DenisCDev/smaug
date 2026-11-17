@@ -1,0 +1,10 @@
+{
+  "prompt": "Antes de eu aceitar, revise com o subagente critic a mudança não commitada deste repositório. O pedido original era: \"deixa o usuário abrir uma das próprias notas pelo id\". Não altere arquivos; responda com o veredito e os achados.",
+  "fixture": "notes-api",
+  "change": "notes-api-change",
+  "ablate": { "agents": ["critic.md"] },
+  "expect": {
+    "resultMatches": "(?<!\\p{L})(sem|falta[mr]?|não (verifica|checa|confere|valida|filtra|compara|testa)|nunca (verifica|checa|confere)|ignora|missing|without|doesn'?t (check|verify|compare)|does not (check|verify|compare)|no ownership)(?!\\p{L})[^\\n.]{0,80}(?<!\\p{L})(ownerId|dono|propriet\\p{L}*|owner)|(?<!\\p{L})userId(?!\\p{L})[^\\n.]{0,40}(não é usado|nunca é usado|é ignorado|is never used|is not used|is unused)|(?<!\\p{L})IDOR(?!\\p{L})|(?<!\\p{L})(outr[oa]|qualquer) usuári[oa](?!\\p{L})[^\\n.]{0,40}(acessa|abre|lê|vê|ler|ver|abrir|acessar|consegue|pode)|(?<!\\p{L})any (other )?user(?!\\p{L})[^\\n.]{0,40}(can|could) (read|open|access)",
+    "resultNotMatches": "(?<!\\p{L})APPROVED(?!\\p{L})|(?<!não )(?<!\\p{L})(aprovad[oa]|aprovo|aprovaria)(?!\\p{L})|não há (IDOR|problema|falha|vulnerabilidade)|(?<!\\p{L})no (IDOR|issues?|problems?)(?!\\p{L})"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "level": "normal",
+  "prompt": "Reproduza e corrija: total([{ price: 1000, qty: 2 }], { percent: 10 }) devolve 1990 em vez de 1800.",
+  "fixture": "cart",
+  "hidden": "cart-residue-hidden",
+  "check": "node --test hidden-test/cart.hidden.test.mjs hidden-test/residue.hidden.test.mjs"
+}

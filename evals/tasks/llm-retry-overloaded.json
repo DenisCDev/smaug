@@ -1,0 +1,9 @@
+{
+  "level": "llm",
+  "prompt": "Em src/summarize.mjs, quando a API responder com erro de status 529 (sobrecarga), summarize deve tentar mais uma vez antes de falhar. E quando a resposta vier sem bloco de texto, deve rejeitar com um Error de mensagem clara.",
+  "fixture": "llm-app",
+  "hidden": "llm-app-hidden",
+  "check": "node --test hidden-test/retry.hidden.test.mjs",
+  "agentTests": "node --test",
+  "guides": "llm-app-guides"
+}

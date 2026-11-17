@@ -1,0 +1,16 @@
+{
+  "prompt": "Em src/cart.mjs, adicione uma função applyShipping(total, cep) que soma o frete ao total: 1500 centavos quando o CEP começa com 0, 1, 2 ou 3, e 2500 para os demais. O total e o frete são em centavos.",
+  "fixture": "cart",
+  "draft": {
+    "claudeMd": {
+      "file": "gotchas.md",
+      "after": "Code",
+      "remove": [
+        " Pay essential complexity without apology; cut everything else. No over-engineering, no dead code, no speculative abstractions, no boilerplate.",
+        "- Comments only for non-obvious WHY — never narrate WHAT.\n"
+      ]
+    }
+  },
+  "ablate": { "claudeMd": ["Gotchas"] },
+  "expect": { "addedLines": true }
+}

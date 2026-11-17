@@ -1,0 +1,31 @@
+name: public-guard
+
+# Every push, any branch or tag: a ref name, tag message or commit becomes public
+# the moment it is pushed. Fork PRs do not receive the secret, so there only the
+# generic patterns run; pushes require it and check the whole history.
+on:
+  push:
+    branches: ['**']
+    tags: ['**']
+  pull_request:
+
+jobs:
+  public-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: guard tests
+        run: node --test scripts/public-guard.test.mjs
+      - name: nothing private reaches the public repository
+        env:
+          SMUGAN_PUBLIC_DENYLIST: ${{ secrets.PUBLIC_DENYLIST }}
+          RANGE: ${{ github.event_name == 'pull_request' && format('{0}..{1}', github.event.pull_request.base.sha, github.event.pull_request.head.sha) || github.ref_type == 'tag' && github.ref || github.sha }}
+          REF: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+          REQUIRE: ${{ github.event_name == 'push' && '--require-denylist' || '' }}
+        run: node scripts/public-guard.mjs --commits "$RANGE" --ref "$REF" $REQUIRE

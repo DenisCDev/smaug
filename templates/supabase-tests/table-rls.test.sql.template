@@ -1,0 +1,51 @@
+-- smugan per-table RLS test — the scenarios every user-data table must pass.
+-- HOW TO USE:
+--   1. copy this file to supabase/tests/<NNN>-<table>.test.sql
+--   2. replace every __TABLE__ with the table name
+--   3. adjust the insert column list/values to the table's required columns
+--   4. run: supabase test db
+begin;
+select plan(4);
+
+select tests.create_supabase_user('rls_owner');
+select tests.create_supabase_user('rls_other');
+
+-- owner writes one row (adjust columns to the table)
+select tests.authenticate_as('rls_owner');
+insert into __TABLE__ (user_id /*, other required columns */)
+values (tests.get_supabase_uid('rls_owner') /*, ... */);
+
+-- 1) anon cannot write
+select tests.clear_authentication();
+select throws_ok(
+  $$ insert into __TABLE__ (user_id) values (gen_random_uuid()) $$,
+  '42501',
+  null,
+  'anon cannot insert into __TABLE__'
+);
+
+-- 2) anon reads nothing
+select results_eq(
+  $$ select count(*) from __TABLE__ $$,
+  $$ values (0::bigint) $$,
+  'anon reads zero rows from __TABLE__'
+);
+
+-- 3) owner reads own rows
+select tests.authenticate_as('rls_owner');
+select results_eq(
+  $$ select count(*) from __TABLE__ $$,
+  $$ values (1::bigint) $$,
+  'owner reads own rows in __TABLE__'
+);
+
+-- 4) another authenticated user reads zero
+select tests.authenticate_as('rls_other');
+select results_eq(
+  $$ select count(*) from __TABLE__ $$,
+  $$ values (0::bigint) $$,
+  'another user reads zero rows from __TABLE__'
+);
+
+select * from finish();
+rollback;

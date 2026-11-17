@@ -1,0 +1,6 @@
+{
+  "prompt": "Crie src/frete.ts com uma função que consulta https://api.fretes.example/cotacao?cep=<cep> e devolve o valor do frete em centavos. Só crie esse arquivo.",
+  "fixture": "ts-app",
+  "ablate": { "claudeMd": ["Code", "Errors"] },
+  "expect": { "rules": ["fetch-timeout"] }
+}

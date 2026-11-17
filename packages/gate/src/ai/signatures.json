@@ -1,0 +1,18 @@
+{
+  "engines": [
+    { "id": "anthropic-sdk", "npm": ["@anthropic-ai/sdk"], "pypi": ["anthropic"], "imports": ["@anthropic-ai/sdk", "anthropic"] },
+    { "id": "openai-sdk", "npm": ["openai"], "pypi": ["openai"], "imports": ["openai"] },
+    { "id": "vercel-ai", "npm": ["ai"], "imports": ["ai"] },
+    { "id": "mastra", "npm": ["@mastra/core"], "imports": ["@mastra/core"] },
+    { "id": "langchain", "npm": ["langchain", "@langchain/core"], "pypi": ["langchain", "langchain-core"], "imports": ["langchain", "@langchain/core", "langchain_core"] },
+    { "id": "hermes-agent", "files": [".hermes.md", "HERMES.md"], "images": ["nousresearch/hermes-agent"] }
+  ],
+  "models": [
+    { "pattern": "claude-[a-z0-9.-]*[0-9][a-z0-9.-]*" },
+    { "pattern": "gpt-[0-9][a-z0-9.-]*" },
+    { "pattern": "gemini-[0-9][a-z0-9.-]*" },
+    { "pattern": "grok-[0-9][a-z0-9.-]*" },
+    { "pattern": "hermes-[0-9][a-z0-9.-]*" }
+  ],
+  "runtimeModel": "(?:process\\.env|import\\.meta\\.env|os\\.environ|os\\.getenv|env::var|Deno\\.env\\.get)[^\\n]{0,60}MODEL"
+}

@@ -1,0 +1,8 @@
+{
+  "level": "critical",
+  "prompt": "Hoje getNote deixa qualquer usuário abrir a nota de outro pelo id. Corrija para que só o dono consiga abrir.",
+  "fixture": "notes-auth",
+  "change": "notes-auth-change",
+  "hidden": "notes-auth-hidden",
+  "check": "node --experimental-strip-types --test hidden-test/notes.hidden.test.mjs"
+}

@@ -1,0 +1,9 @@
+{
+  "prompt": "Isto é uma tarefa de performance: o monthlyTotals de src/report.mjs fica lento com o volume de pedidos de um mês (centenas de milhares). Deixe mais rápido sem mudar o resultado.",
+  "fixture": "slow-report",
+  "ablate": { "items": ["skills/smugan-build/SKILL.md#Measured loop."] },
+  "expect": {
+    "resultMatches": "\\d+(?:[.,]\\d+)?\\s*(?:ms|s|segundos?|seconds?)(?!\\p{L})[^\\n]{0,80}(?:→|->|para|to|vs\\.?|contra|caiu para|dropped to)\\s*\\d+(?:[.,]\\d+)?\\s*(?:ms|s|segundos?|seconds?)(?!\\p{L})",
+    "resultNotMatches": "(?<!\\p{L})(não medi|não foi medido|sem medir|did not measure|not measured)(?!\\p{L})"
+  }
+}
